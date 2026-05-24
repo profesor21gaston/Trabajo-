@@ -1,0 +1,147 @@
+/* Estética Oscura / Futurista / Minimalista */
+:root {
+  --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8;
+  --primary: #38bdf8; --accent: #10b981; --warning: #f59e0b;
+  --danger: #ef4444; --purple: #a855f7; --teal: #14b8a6;
+  --blue: #3b82f6; --line: #334155; --glow: rgba(56, 189, 248, 0.4);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body { margin: 0; padding: 20px; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+h1 { margin: 0 0 20px; text-align: center; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--glow); font-size: 1.8rem; }
+
+/* Hacer todos los inputs y botones aptos para tocar con el dedo (estándar 44px) */
+input[type="text"], input[type="number"], input[type="time"], input[type="month"], select, button {
+  min-height: 44px; padding: 10px 14px; font-size: 16px; /* 16px previene el auto-zoom en iPhone */
+  border: 1px solid var(--line); border-radius: 8px; font: inherit; background: var(--bg); color: var(--text); outline: none; transition: all 0.2s ease;
+}
+input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 8px var(--glow); }
+
+/* Panel de Controles */
+.controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 24px; background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--line); }
+.controls #workerName { flex: 1 1 200px; min-width: 150px; }
+
+button { background: var(--card); color: var(--primary); border: 1px solid var(--primary); cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+button:hover, button:active { background: var(--primary); color: #000; box-shadow: 0 0 10px var(--glow); }
+button.danger { color: var(--danger); border-color: var(--danger); }
+button.danger:hover, button.danger:active { background: var(--danger); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+.btn-config { border-color: var(--warning); color: var(--warning); }
+.btn-config:hover, .btn-config:active { background: var(--warning); color: #000; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+.btn-excel { border-color: var(--accent); color: var(--accent); }
+.btn-excel:hover, .btn-excel:active { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+.btn-cancel { width: 100%; margin-top: 10px; background: transparent; border-color: var(--line); color: var(--text); }
+
+/* Calendario - Escritorio (Grilla) */
+#calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; max-width: 900px; margin: 0 auto; }
+.day-header { text-align: center; font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 0.85rem; padding-bottom: 5px; }
+
+.day { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px; min-height: 95px; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+.day:hover, .day:active { border-color: var(--primary); }
+
+.day.worked { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+.day.worked .day-number { color: var(--accent); }
+.day.feriado { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+.day.feriado .day-number { color: var(--warning); }
+.day.enfermedad_paga { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+.day.enfermedad_paga .day-number { color: var(--danger); }
+.day.enfermedad_nopaga { background: rgba(239, 68, 68, 0.05); border-color: #fca5a5; opacity: 0.8; }
+.day.enfermedad_nopaga .day-number { color: #fca5a5; }
+.day.vacaciones_pagas { background: rgba(168, 85, 247, 0.1); border-color: var(--purple); }
+.day.vacaciones_pagas .day-number { color: var(--purple); }
+.day.vacaciones_nopagas { background: rgba(168, 85, 247, 0.05); border-color: #d8b4fe; opacity: 0.8; }
+.day.vacaciones_nopagas .day-number { color: #d8b4fe; }
+.day.parke { background: rgba(59, 130, 246, 0.15); border-color: var(--blue); }
+.day.parke .day-number { color: var(--blue); }
+
+.day-number { font-size: 1.1em; font-weight: 700; color: var(--primary); display: flex; justify-content: space-between; }
+.note-icon { font-size: 0.9em; }
+.day-details { display: flex; flex-direction: column; flex: 1; }
+
+.day-hours { font-size: 0.75em; color: var(--text-muted); line-height: 1.4; margin-top: 4px; }
+.day-type-badge { font-size: 0.7em; font-weight: bold; text-transform: uppercase; margin-top: auto; }
+.warning-text { color: var(--warning); font-size: 0.75em; font-weight: bold; margin-top: 4px; background: rgba(245, 158, 11, 0.1); padding: 2px 4px; border-radius: 4px; border: 1px solid var(--warning); display: inline-block;}
+
+/* Resumen Financiero */
+#summary { margin: 30px auto; max-width: 900px; display: flex; flex-wrap: wrap; justify-content: space-around; background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--line); gap: 15px; }
+.stat-box { text-align: center; flex: 1; min-width: 100px; }
+.stat-box span { display: block; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+.stat-box strong { font-size: 1.2em; color: var(--accent); }
+
+/* Modales */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 9999; padding: 10px; }
+.modal-content { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--line); width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; }
+.modal-content h3 { margin-top: 0; color: var(--primary); text-align: center; }
+.modal-content label { margin: 12px 0 6px; font-size: 0.9em; color: var(--text-muted); display: block;}
+.section-title-modal { margin: 20px 0 10px 0; font-weight: bold; font-size: 1em; border-bottom: 1px solid var(--line); padding-bottom: 5px; color: var(--accent); }
+.section-title-modal.text-purple { color: var(--purple); }
+.modal-actions { display: flex; gap: 10px; margin-top: 25px; }
+.modal-actions button { flex: 1; }
+
+/* Tooltips (?) */
+.label-with-help { display: flex; justify-content: space-between; align-items: flex-end; margin: 12px 0 6px; }
+.label-with-help label { margin: 0; }
+
+.tooltip {
+  position: relative; display: inline-flex; justify-content: center; align-items: center; cursor: pointer;
+  background-color: var(--line); color: var(--text); border-radius: 50%;
+  width: 24px; height: 24px; font-size: 14px; font-weight: bold; flex-shrink: 0;
+}
+.tooltip:hover, .tooltip:active { background-color: var(--primary); color: #000; }
+.tooltip .tooltip-texto {
+  visibility: hidden; width: 220px; background-color: #222; color: #fff;
+  text-align: center; border-radius: 8px; padding: 10px; position: absolute;
+  z-index: 10000; bottom: 130%; right: -10px; opacity: 0;
+  transition: opacity 0.3s; font-size: 13px; font-weight: normal; line-height: 1.4;
+  border: 1px solid #444; pointer-events: none;
+}
+.tooltip:hover .tooltip-texto, .tooltip:active .tooltip-texto { visibility: visible; opacity: 1; }
+
+/* MODO CELULAR (RESPONSIVE) */
+@media (min-width: 769px) {
+  .day-details { margin-top: auto; }
+  .mobile-day-name { display: none; } /* Ocultar nombre del día en escritorio */
+}
+
+@media (max-width: 768px) {
+  body { padding: 10px; }
+  
+  /* Controles de arriba (Botones 100% de ancho) */
+  .controls { flex-direction: column; padding: 12px; }
+  .controls input, .controls button, .controls select { width: 100%; }
+
+  /* Transformar el Calendario a Lista Vertical */
+  #calendar { display: flex; flex-direction: column; gap: 10px; }
+  .day-header { display: none; } /* Ocultamos Lun, Mar, Mie de la grilla */
+  #calendar > div:not(.day) { display: none; } /* Ocultar espacios en blanco del principio de mes */
+  
+  .day { 
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 15px; 
+    min-height: auto;
+  }
+  
+  .day-number { font-size: 1.2em; display: flex; align-items: center; gap: 8px; width: 40%; }
+  .mobile-day-name { display: inline-block; font-size: 0.85em; color: var(--text-muted); font-weight: normal; }
+  
+  .day-details { align-items: flex-end; width: 60%; }
+  .day-hours { text-align: right; margin: 0 0 5px 0; font-size: 0.85em; }
+  .day-type-badge { margin: 0; text-align: right; font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.2); }
+
+  /* Resumen Estadísticas en Celular (Grilla 2 columnas) */
+  #summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
+  .stat-box { text-align: left; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+
+  /* Tooltips en Celular (Aparecen flotando en el medio como un mensaje emergente) */
+  .tooltip .tooltip-texto {
+    position: fixed;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 85vw; max-width: 320px;
+    padding: 20px; font-size: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    bottom: auto; right: auto;
+  }
+  .tooltip:active .tooltip-texto { visibility: visible; opacity: 1; }
+}

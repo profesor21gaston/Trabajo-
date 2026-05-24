@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro de Horas Avanzado</title>
+  <!-- Esta etiqueta es la que permite que el celular entienda que es una app móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>Panel de Horas</h1>
+
+  <div class="controls">
+    <input type="text" id="workerName" placeholder="Nombre del trabajador" />
+    <input type="month" id="monthPicker" />
+    <button id="btnConfig" class="btn-config">⚙️ Ajustes / Pagos</button>
+    <button id="setScheduleBtn">Horario Base</button>
+    <button id="downloadPdf">Exportar PDF</button>
+    <button id="downloadCsv" class="btn-excel">Exportar Excel</button>
+    <button id="clearData" class="danger">Limpiar Mes</button>
+  </div>
+
+  <div id="calendar"></div>
+  <div id="summary"></div>
+
+  <!-- Modal Ajustes -->
+  <div id="configModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Ajustes Generales</h3>
+      
+      <div class="label-with-help">
+        <label>Tipo de Pago:</label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">Selecciona cómo te pagan. Si eliges "Por Hora", el cálculo se basará en las horas trabajadas. Las otras opciones calculan el valor de la hora dividiendo tu sueldo por las horas normales.</span>
+        </div>
+      </div>
+      <select id="confPaymentType">
+        <option value="hora">Por Hora</option>
+        <option value="dia">Por Día (Jornada)</option>
+        <option value="quincena">Por Quincena</option>
+        <option value="mes">Por Mes</option>
+      </select>
+
+      <div class="label-with-help">
+        <label>Valor del Pago ($):</label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">El monto que cobras según el "Tipo de Pago" que elegiste arriba.</span>
+        </div>
+      </div>
+      <input type="number" id="confPaymentValue" step="0.01" />
+
+      <div class="label-with-help">
+        <label>Jornada normal (horas por día):</label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">Cuántas horas trabajas en un día normal (sin contar extras). Generalmente son 8 o 9 horas.</span>
+        </div>
+      </div>
+      <input type="number" id="confNormalHours" step="0.5" />
+      
+      <div class="label-with-help">
+        <label>Pago Hora Extra:</label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">Cómo se pagan las horas extras. "Al 50%" significa que valen 1.5 veces una hora normal. "Al 100%" significa que valen el doble.</span>
+        </div>
+      </div>
+      <select id="confExtraMult">
+        <option value="1.0">Normal (Sin recargo)</option>
+        <option value="1.5">Al 50% (x1.5)</option>
+        <option value="2.0">Al 100% (x2.0)</option>
+      </select>
+      
+      <div class="label-with-help">
+        <label>Pago Feriado Trabajado:</label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">Cómo se pagan las horas trabajadas en un día feriado. Usualmente se pagan al 100% (doble).</span>
+        </div>
+      </div>
+      <select id="confHolidayMult">
+        <option value="1.0">Normal (Sin recargo)</option>
+        <option value="1.5">Al 50% (x1.5)</option>
+        <option value="2.0">Al 100% (Doble)</option>
+      </select>
+      
+      <div class="modal-actions">
+        <button onclick="saveConfig()">Guardar Ajustes</button>
+        <button onclick="closeModals()" class="danger">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Horario Base -->
+  <div id="scheduleModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Horario Base (Por Defecto)</h3>
+      <p style="font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 15px;">
+        Este es el horario que aparecerá pre-cargado al abrir un día nuevo.
+      </p>
+      
+      <div class="section-title-modal">Horario Normal</div>
+      <label>Entrada:</label>
+      <input type="time" id="baseInTime" />
+      <label>Salida:</label>
+      <input type="time" id="baseOutTime" />
+      
+      <div class="section-title-modal text-purple">Horas Extras Base</div>
+      
+      <div class="label-with-help">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text);">
+          <input type="checkbox" id="useBaseExtra" style="width: 24px; height: 24px; margin:0;" />
+          Auto-rellenar Horas Extras
+        </label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">Si lo activas, todos los días nuevos vendrán con estas horas extras pre-cargadas. Si no haces extras todos los días, es mejor dejarlo desactivado.</span>
+        </div>
+      </div>
+
+      <label>Entrada Extra:</label>
+      <input type="time" id="baseExtraInTime" />
+      <label>Salida Extra:</label>
+      <input type="time" id="baseExtraOutTime" />
+
+      <div class="modal-actions">
+        <button onclick="saveBaseSchedule()">Guardar</button>
+        <button onclick="closeModals()" class="danger">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Día -->
+  <div id="dayModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="dayModalTitle">Editar Día</h3>
+      
+      <div class="label-with-help">
+        <label>Estado del día:</label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">Selecciona si trabajaste normal, si fue feriado, o si tuviste alguna falta. Las faltas ocultan los horarios.</span>
+        </div>
+      </div>
+      <select id="dayType" onchange="toggleDayTypeInputs()">
+        <option value="normal">Trabajo Normal</option>
+        <option value="feriado">Feriado Trabajado</option>
+        <option value="parke">Parke (Falta Paga)</option>
+        <option value="enfermedad_paga">Enfermedad (Paga)</option>
+        <option value="enfermedad_nopaga">Enfermedad (No Paga)</option>
+        <option value="vacaciones_pagas">Vacaciones (Pagas)</option>
+        <option value="vacaciones_nopagas">Vacaciones (No Pagas)</option>
+      </select>
+
+      <div id="timeInputsContainer">
+        <div class="section-title-modal">Horario Normal</div>
+        <label>Entrada:</label>
+        <input type="time" id="dayInTime" />
+        <label>Salida:</label>
+        <input type="time" id="dayOutTime" />
+        
+        <div class="section-title-modal text-purple" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Horas Extras</span>
+          <div class="label-with-help" style="margin: 0;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text); font-weight: normal; font-size: 0.9em;">
+              <input type="checkbox" id="enableDayExtra" onchange="toggleDayExtraInputs()" style="width: 20px; height: 20px; margin:0;" />
+              Activar
+            </label>
+            <div class="tooltip" style="margin-left: 10px;">?
+              <span class="tooltip-texto">Marca esta casilla solo si hiciste horas extras en este día específico. Esto habilita los campos de abajo.</span>
+            </div>
+          </div>
+        </div>
+        
+        <div id="dayExtraInputsContainer" style="display: none;">
+          <label>Entrada Extra:</label>
+          <input type="time" id="dayExtraInTime" />
+          <label>Salida Extra:</label>
+          <input type="time" id="dayExtraOutTime" />
+        </div>
+      </div>
+
+      <div class="label-with-help">
+        <label>Nota / Justificación (Opcional):</label>
+        <div class="tooltip">?
+          <span class="tooltip-texto">Puedes escribir un recordatorio de por qué llegaste tarde, por qué hiciste extras, o el motivo de la falta.</span>
+        </div>
+      </div>
+      <input type="text" id="dayNote" placeholder="Ej: Llegué tarde, visita médica..." />
+
+      <div class="modal-actions">
+        <button onclick="saveSpecificDay()">Confirmar</button>
+        <button onclick="clearSpecificDay()" class="danger">Borrar Día</button>
+      </div>
+      <button onclick="closeModals()" class="btn-cancel">Cancelar</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
